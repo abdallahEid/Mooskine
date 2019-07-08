@@ -34,3 +34,24 @@ class DataController {
     }
     
 }
+
+extension DataController {
+    func autoSaveViewContext(timeInterval: TimeInterval = 30){
+        guard timeInterval > 0 else {
+            print("cannot set negative interval")
+            return
+        }
+        
+        if viewContext.hasChanges {
+            saveViewContext()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + timeInterval) {
+            self.autoSaveViewContext(timeInterval: timeInterval)
+        }
+    }
+    
+    func saveViewContext(){
+        try? viewContext.save()
+    }
+}
